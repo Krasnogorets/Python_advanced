@@ -7,8 +7,9 @@
  8 ферзей на доске, определите, есть ли среди них пара бьющих друг друга.
 Программа получает на вход восемь пар чисел, каждое число от 1 до 8 - координаты 8 ферзей.
 Если ферзи не бьют друг друга верните истину, а если бьют - ложь. Не забудьте напечатать результат.
-"""
-queens = [(1, 1), (2, 3), (3, 5), (4, 7), (5, 2), (6, 4), (7, 6), (8, 8)]
+# """
+# queens = [(1, 1), (2, 3), (3, 5), (4, 7), (5, 2), (6, 4), (7, 6), (8, 8)]
+queens = [(4, 4)]
 
 chessboard = [[0] * 10 for i in range(10)]
 
@@ -126,7 +127,7 @@ def put_the_figure_and_fill_array(row, col):
         return False
 
 
-def fill_the_borders():  # заполение границ симолом 3
+def fill_the_borders():  # заполение границ символом 3
     global chessboard
     row = 0
     col = 0
@@ -148,37 +149,37 @@ def fill_the_borders():  # заполение границ симолом 3
             row -= 1
 
 
-def put_the_figures():
-    global chessboard
-    for k in range(1, 9):
-        for v in range(1, 9):
-            clean_array()
-            put_the_figure_and_fill_array(k, v)
-            count = 0
-            count_flag = 0
-            while count < 8:
-                count += 1
-                flag = False
-                for i in range(1, 9):
-                    if flag:
-                        break
-                    for j in range(1, 9):
-                        if not put_the_figure_and_fill_array(i, j):
-                            continue
-                        else:
-                            flag = True
-                            break
-
-                if flag:
-                    count_flag += 1
-                if count_flag < count:
-                    break
-
-                if count_flag == 7:
-                    clean_fig_path()
-                    print_array()
-
-    return
+# def put_the_figures():
+#     global chessboard
+#     for k in range(1, 9):
+#         for v in range(1, 9):
+#             clean_array()
+#             put_the_figure_and_fill_array(k, v)
+#             count = 0
+#             count_flag = 0
+#             while count < 8:
+#                 count += 1
+#                 flag = False
+#                 for i in range(1, 9):
+#                     if flag:
+#                         break
+#                     for j in range(1, 9):
+#                         if not put_the_figure_and_fill_array(i, j):
+#                             continue
+#                         else:
+#                             flag = True
+#                             break
+#
+#                 if flag:
+#                     count_flag += 1
+#                 if count_flag < count:
+#                     break
+#
+#                 if count_flag == 7:
+#                     clean_fig_path()
+#                     # print_array()
+#
+#     return
 
 
 def clean_array():  # ф-ция очистки массива
@@ -197,7 +198,22 @@ def clean_fig_path():  # ф-ция очистки пути фигуры (при 
 
 
 def is_attacking(q1, q2):
-    print(put_the_figure_and_fill_array(q1,q2))
+    if put_the_figure_and_fill_array(q1, q2):
+        return True
+    else:
+        return False
+    # print_array()
+
+
+def check_queens(queens):
+    lst = []
+    for el in queens:
+        lst.append(is_attacking(el[0], el[1]))
+        print(lst)
+
+    if all(lst):
+        return True
+    return False
 
 
 # print("3 - границы массива, 2 - ферзи")
@@ -209,4 +225,7 @@ fill_the_borders()
 # put_the_figures()
 # fill_the_borders()
 # print_array()
-is_attacking(1,1)
+# print(is_attacking(4,4))
+print(check_queens(queens))
+# clean_fig_path()
+print_array()
