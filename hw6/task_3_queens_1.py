@@ -1,21 +1,18 @@
 """
-Добавьте в пакет, созданный на семинаре шахматный модуль.
-Внутри него напишите код, решающий задачу о 8 ферзях, включающий в себя
-функцию is_attacking(q1,q2), проверяющую, бьют ли ферзи друг друга и heck_queens(queens),
- которая проверяет все возможные пары ферзей.
-Известно, что на доске 8×8 можно расставить 8 ферзей так, чтобы они не били друг друга. Вам дана расстановка
- 8 ферзей на доске, определите, есть ли среди них пара бьющих друг друга.
-Программа получает на вход восемь пар чисел, каждое число от 1 до 8 - координаты 8 ферзей.
-Если ферзи не бьют друг друга верните истину, а если бьют - ложь. Не забудьте напечатать результат.
-# """
-# queens = [(1, 1), (2, 3), (3, 5), (4, 7), (5, 2), (6, 4), (7, 6), (8, 8)]
-# queens = [(2, 7), (5, 2), (1, 5), (7, 6), (4, 4), (3, 1), (8, 3), (6, 8)]
+Расстановка ферзей
 
+Используйте генератор случайных чисел для случайной расстановки ферзей в задаче выше.
+Проверяйте различный случайные варианты и выведите 4 успешных расстановки.
 
-# queens = [(5, 2), (7, 7), (1, 8), (4, 6), (2, 3), (8, 4), (6, 5), (3, 1)]
-# queens = [(7, 2), (3, 5), (2, 8), (6, 7), (1, 4), (4, 3), (8, 6), (5, 1)]
-# queens = [(5, 2), (8, 6), (1, 5), (4, 4), (3, 8), (2, 1), (7, 3), (6, 7)]
-# queens = [(3, 4), (2, 7), (5, 3), (8, 2), (1, 5), (7, 6), (6, 8), (4, 1)]
+Под "успешной расстановкой ферзей" в данном контексте подразумевается такая расстановка ферзей на шахматной доске,
+ в которой ни один ферзь не бьет другого. Другими словами, ферзи размещены таким образом,
+ что они не находятся на одной вертикали, горизонтали или диагонали.
+
+Список из 4х комбинаций координат сохраните в board_list. Дополнительно печатать его не надо.
+"""
+import operator
+import random
+
 
 chessboard = [[0] * 10 for i in range(10)]
 
@@ -155,37 +152,55 @@ def fill_the_borders():  # заполение границ символом 3
             row -= 1
 
 
-# def put_the_figures():
-#     global chessboard
-#     for k in range(1, 9):
-#         for v in range(1, 9):
-#             clean_array()
-#             put_the_figure_and_fill_array(k, v)
-#             count = 0
-#             count_flag = 0
-#             while count < 8:
-#                 count += 1
-#                 flag = False
-#                 for i in range(1, 9):
-#                     if flag:
-#                         break
-#                     for j in range(1, 9):
-#                         if not put_the_figure_and_fill_array(i, j):
-#                             continue
-#                         else:
-#                             flag = True
-#                             break
-#
-#                 if flag:
-#                     count_flag += 1
-#                 if count_flag < count:
-#                     break
-#
-#                 if count_flag == 7:
-#                     clean_fig_path()
-#                     # print_array()
-#
-#     return
+def put_the_figures():  # ф-ция подбора расстановки ферзей
+    queen_num = 8
+    temp_lst = []  # временное хранилище координат ферзей
+    final_lst = []
+    global chessboard
+    for k in range(1, 9):
+        k1 = random.randint(1, 8)
+        for v in range(1, 9):
+            v1 = random.randint(1, 8)
+            clean_array()
+            put_the_figure_and_fill_array(k1, v1)
+            temp_lst.append((k1, v1))
+            count = 0
+            count_flag = 0
+            while count < queen_num:
+                count += 1
+                flag = False
+                for i in range(1, 9):
+                    i1 = random.randint(1, 8)
+                    if flag:
+                        break
+                    for j in range(1, 9):
+                        j1 = random.randint(1, 8)
+                        # print(k1,v1, i1, j1)
+                        # print_array()
+                        if not put_the_figure_and_fill_array(i1, j1):
+                            continue
+                        else:
+                            flag = True
+                            temp_lst.append((i1, j1))
+                            # print(temp_lst)
+                            break
+
+                if flag:
+                    count_flag += 1
+                if count_flag < count:
+                    break
+
+                if count_flag == queen_num - 1:
+                    clean_fig_path()
+
+                    final_lst.append(temp_lst)
+                    # print("final", final_lst)
+                    return final_lst
+                    # print_array()
+
+            temp_lst.clear()
+
+    return final_lst
 
 
 def clean_array():  # ф-ция очистки массива
@@ -211,9 +226,9 @@ def is_attacking(q1, q2):
     # print_array()
 
 
-def check_queens(queens):
+def check_queens(lst1):
     lst = []
-    for el in queens:
+    for el in lst1:
         lst.append(is_attacking(el[0], el[1]))
         print(lst)
 
@@ -222,16 +237,55 @@ def check_queens(queens):
     return False
 
 
-# print("3 - границы массива, 2 - ферзи")
-# print()
-# print("  готовая расстановка ферзей:")
-# print()
+def generate_boards():  # test
+    global board_list1
+    flag = True
+    count = 0  # счетчик вариантов правильной расстановки
+
+    while flag:
+        temp_lst = put_the_figures()
+        # print(temp_lst)
+
+        if len(board_list1) != 0 and len(temp_lst) != 0:
+            if not operator.eq(set(temp_lst[0]), set(board_list1[count])):
+                board_list1.append(temp_lst[0])
+                count += 1
+                # print('board list', board_list)
+        elif len(temp_lst) != 0:
+            board_list1.append(temp_lst[0])
+            # print('board list', board_list)
+        if count == 3:
+            flag = False
+        temp_lst.clear()
+    return board_list1
+
+
+def board():
+    global board_list1
+    lst = []
+    for el in board_list1:
+        clean_array()
+        fill_the_borders()
+        lst.append(check_queens(el))
+        # print(lst)
+
+    # if all(lst):
+    #     return True
+    return lst
+
+
+board_list1 = []
+
 clean_array()
 fill_the_borders()
 # put_the_figures()
 # fill_the_borders()
 # print_array()
 # print(is_attacking(4,4))
-print(check_queens(queens))
+# print(check_queens(queens))
 # clean_fig_path()
-print_array()
+# print_array()
+board_list = generate_boards()
+print(board_list,'\n', len(board_list))
+# print(board_list)
+
